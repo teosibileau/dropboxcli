@@ -47,7 +47,7 @@ class Access(object):
             SimpleLine('Accessing yaml settings', 'cyan')
             self.app_key = y['access']['app_key']
             self.app_secret = y['access']['app_secret']
-            self.secret = y['access']['access_type']
+            self.access_type = y['access']['access_type']
             f.close()
             self.consolidated = True
         except:
@@ -75,23 +75,30 @@ class Auth():
             self.access.access_type
         )
         try:
-            with open(TOKEN_FILE, 'r') as token_file:
-                for line in token_file:
-                    s = line.split('-')
-                    if s.__len__() == 2:
-                        self.sess.set_token(s[0], s[1])
-                    break
+            f = file(YAML, mode='r')
+            y = yaml.load(f)
+            s = y['access']['token'].split('-')
+            if s.__len__() == 2:
+                self.sess.set_token(s[0], s[1])
+            f.close()
             self.client = client.DropboxClient(self.sess)
         except:
             request_token = self.sess.obtain_request_token()
             url = self.sess.build_authorize_url(request_token)
-            print "url:", url
-            print "Please visit this website and press the 'Allow' button, then hit 'Enter' here."
+            SimpleLine("url: %s" % url, 'yellow')
+            SimpleLine(
+                "Please visit this website and press the 'Allow' button, then hit 'Enter' here.",
+                'cyan'
+            )
             raw_input()
             access_token = self.sess.obtain_access_token(request_token)
-            with open(TOKEN_FILE, 'w') as token_file:
-                token_file.write('%s-%s' % (access_token.key, access_token.secret))
-                token_file.close()
+            f = file(YAML, mode='r')
+            y = yaml.load(f)
+            f.close()
+            y['access']['token'] = '%s-%s' % (access_token.key, access_token.secret)
+            f = file(YAML, mode='w+')
+            yaml.dump(y, f, indent=4)
+            f.close()
             self.client = client.DropboxClient(self.sess)
 
 
