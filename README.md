@@ -7,7 +7,7 @@ Take into account that if you run this in a computer that has that dropbox accou
 # Installation
 
 ```bash
-pip install git+git://github.com/drkloc/dropboxcli.git#egg=dropboxcli
+pip install https://github.com/drkloc/dropboxcli.git
 ```
 
 # Usage
