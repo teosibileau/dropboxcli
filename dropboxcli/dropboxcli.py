@@ -1,32 +1,19 @@
 #!/usr/bin/env python
-import os
-import sys
-import yaml
+import os, sys, logging, yaml
 from dropbox import client, session
-
-from termcolor import cprint
 
 SCRIPT_ROOT = os.path.dirname(os.path.realpath(__file__))
 TOKEN_FILE = os.path.join(SCRIPT_ROOT, '.access_token')
 
 LINE_LENGHT = 40
 
-
-class Header(object):
-    def __init__(self, text, color='white'):
-        print '\n'
-        CPRINT = lambda x: cprint(x, color)
-        line = ''.join(['#' for i in range(LINE_LENGHT)])
-        CPRINT(line)
-        CPRINT('\t %s' % text)
-        CPRINT(line)
-        print '\n'
-
+from colorama import init, Fore, Back, Style
 
 class SimpleLine(object):
-    def __init__(self, text, color='white'):
-        CPRINT = lambda x: cprint(x, color)
-        CPRINT(text)
+    def __init__(self, text, color=Fore.WHITE, background=Back.BLACK):
+        print
+        print(background + color + ' ' + text + ' ' + Style.RESET_ALL)
+        print
 
 YAML = os.path.join(
     os.path.expanduser('~'),
@@ -51,7 +38,7 @@ class Access(object):
             f.close()
             self.consolidated = True
         except:
-            SimpleLine('cant find YAML settings, generating one', 'magenta')
+            SimpleLine('cant find YAML settings, generating one', Fore.MAGENTA)
             self.app_key = raw_input("Please enter your Dropbox APP_KEY: ")
             self.app_secret = raw_input("Please enter your Dropbox APP_SECRET: ")
 
@@ -85,10 +72,10 @@ class Auth():
         except:
             request_token = self.sess.obtain_request_token()
             url = self.sess.build_authorize_url(request_token)
-            SimpleLine("url: %s" % url, 'yellow')
+            SimpleLine("url: %s" % url, Fore.YELLOW)
             SimpleLine(
                 "Please visit this website and press the 'Allow' button, then hit 'Enter' here.",
-                'cyan'
+                Fore.CYAN
             )
             raw_input()
             access_token = self.sess.obtain_access_token(request_token)
@@ -103,7 +90,7 @@ class Auth():
 
 
 def upload():
-    Header('Dropbox Uploader', 'cyan')
+    SimpleLine('Dropbox Uploader'.upper(), Fore.BLACK, Back.CYAN)
     args = sys.argv
     args.pop(0)
     path = os.getcwd()
@@ -118,4 +105,5 @@ def upload():
 
 
 if __name__ == '__main__':
+    logging.captureWarnings(True)
     upload()

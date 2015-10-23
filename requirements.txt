@@ -1,5 +1,7 @@
-PyYAML==3.10
-dropbox==1.5.1
-pyaml==13.01.0
-termcolor==1.1.0
+PyYAML==3.11
+colorama==0.3.3
+dropbox==3.37
+requests==2.8.1
+six==1.10.0
+urllib3==1.12
 wsgiref==0.1.2
