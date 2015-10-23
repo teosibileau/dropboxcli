@@ -89,19 +89,19 @@ class Auth():
             self.client = client.DropboxClient(self.sess)
 
 
-def upload():
+import click
+
+@click.command()
+@click.argument('path')
+def upload(path):
     SimpleLine('Dropbox Uploader'.upper(), Fore.BLACK, Back.CYAN)
-    args = sys.argv
-    args.pop(0)
-    path = os.getcwd()
-    a = Auth()
-    for arg in args:
-        try:
-            f = open(os.path.join(path, arg))
-            response = a.client.put_file(arg, f)
-            print "uploaded", response
-        except Exception as e:
-            print e
+    a = Auth()    
+    try:
+        f = open(path)
+        response = a.client.put_file(path, f)
+        print "uploaded", response
+    except Exception as e:
+        print e
 
 
 if __name__ == '__main__':
