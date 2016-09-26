@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os, sys, logging, yaml
 from dropbox import client, session
+from tabulate import tabulate
 
 SCRIPT_ROOT = os.path.dirname(os.path.realpath(__file__))
 TOKEN_FILE = os.path.join(SCRIPT_ROOT, '.access_token')
@@ -31,7 +32,7 @@ class Access(object):
         try:
             f = file(YAML, mode='r')
             y = yaml.load(f)
-            SimpleLine('Accessing yaml settings', 'cyan')
+            SimpleLine('Accessing yaml settings', Fore.CYAN)
             self.app_key = y['access']['app_key']
             self.app_secret = y['access']['app_secret']
             self.access_type = y['access']['access_type']
@@ -68,7 +69,6 @@ class Auth():
             if s.__len__() == 2:
                 self.sess.set_token(s[0], s[1])
             f.close()
-            self.client = client.DropboxClient(self.sess)
         except:
             request_token = self.sess.obtain_request_token()
             url = self.sess.build_authorize_url(request_token)
@@ -86,7 +86,7 @@ class Auth():
             f = file(YAML, mode='w+')
             yaml.dump(y, f, indent=4)
             f.close()
-            self.client = client.DropboxClient(self.sess)
+        self.client = client.DropboxClient(self.sess)
 
 
 import click
@@ -95,13 +95,14 @@ import click
 @click.argument('path')
 def upload(path):
     SimpleLine('Dropbox Uploader'.upper(), Fore.BLACK, Back.CYAN)
-    a = Auth()    
     try:
+        a = Auth()
         f = open(path)
         response = a.client.put_file(path, f)
-        print "uploaded", response
+        table = [["%s" % k, response[k]] for k in response.keys()]
+        print tabulate(table)
     except Exception as e:
-        print e
+        SimpleLine('%s' % e, Fore.BLACK, Back.RED)
 
 
 if __name__ == '__main__':
