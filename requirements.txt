@@ -1,8 +1,8 @@
-PyYAML==3.11
 click==5.1
 colorama==0.3.3
 dropbox==3.37
+PyYAML==3.11
 requests==2.8.1
 six==1.10.0
+tabulate==0.7.5
 urllib3==1.12
-wsgiref==0.1.2
